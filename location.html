@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Chrome Hearts | Botswana Atelier — Bright Edition</title>
+    <!-- Google Fonts: elegant serif + clean sans for bright & airy feel -->
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,500;0,600;1,400&family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600&display=swap" rel="stylesheet">
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Leaflet CSS (bright map friendly) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #fef7ed;  /* warm bright base (fallback) */
+            color: #2c1b1b;
+            line-height: 1.45;
+            scroll-behavior: smooth;
+        }
+
+        /* ===== BRIGHT BACKGROUND SLIDESHOW (luminous & soft) ===== */
+        .bg-slideshow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            overflow: hidden;
+        }
+        .bg-slideshow .bg-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center 30%;
+            opacity: 0;
+            transition: opacity 2s ease-in-out;
+            /* bright effect: light filter, no dark crushing */
+            filter: brightness(0.98) contrast(1.02);
+        }
+        .bg-slideshow .bg-slide.active {
+            opacity: 1;
+        }
+        /* soft radial veil — light & airy to keep brightness */
+        .bg-slideshow::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 70% 20%, rgba(255,245,235,0.45), rgba(255,250,240,0.3));
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* main content wrapper - bright cards with crystal transparency */
+        .wrapper {
+            position: relative;
+            z-index: 2;
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 1.5rem 2rem 3rem;
+        }
+
+        /* all cards: bright white/cream glassmorphism, fresh and luminous */
+        .top-bar, .map-card, .details-card, .extra-tile, .hero, .footer {
+            background: rgba(255, 253, 250, 0.92);
+            backdrop-filter: blur(8px);
+            border-radius: 36px;
+            transition: all 0.2s ease;
+            box-shadow: 0 8px 22px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0,0,0,0.02);
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+            padding: 0.9rem 1.8rem;
+            border: 1px solid rgba(210, 140, 120, 0.5);
+        }
+        .logo-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .logo-box img {
+            max-height: 56px;
+            width: auto;
+            filter: drop-shadow(0 2px 6px rgba(0,0,0,0.08));
+        }
+        .logo-text {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 700;
+            font-size: 1.45rem;
+            letter-spacing: 2px;
+            color: #9e3c2c;
+            border-left: 2px solid #c77a5a;
+            padding-left: 12px;
+        }
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+        .nav-links a {
+            color: #3e2828;
+            text-decoration: none;
+            font-weight: 600;
+            letter-spacing: 0.4px;
+            transition: 0.2s;
+            font-size: 0.95rem;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            padding: 4px 0;
+        }
+        .nav-links a:hover {
+            color: #c95b3e;
+            border-bottom-color: #ce7a5e;
+        }
+
+        /* searchbar - bright stylish */
+        .search-container {
+            display: flex;
+            align-items: center;
+            background: #fffbf5;
+            border-radius: 60px;
+            padding: 5px 12px;
+            gap: 8px;
+            border: 1px solid #ddafa0;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.02);
+        }
+        .search-container input {
+            background: transparent;
+            border: none;
+            padding: 8px 6px;
+            font-size: 0.9rem;
+            font-family: 'Inter', sans-serif;
+            min-width: 180px;
+            outline: none;
+            color: #3b2a2a;
+        }
+        .search-container input::placeholder {
+            color: #b78272;
+            font-weight: 400;
+        }
+        .search-container button {
+            background: #ce6b50;
+            border: none;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+        .search-container button:hover {
+            background: #b14e34;
+        }
+
+        .hero {
+            text-align: center;
+            margin: 1.2rem 0 2rem;
+            padding: 2rem 1rem;
+            border: 1px solid #e1bcae;
+        }
+        .hero h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.8rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: #402424;
+            text-shadow: 0 1px 2px rgba(255,245,230,0.9);
+        }
+        .hero p {
+            font-size: 1.1rem;
+            color: #6c4640;
+            font-weight: 500;
+        }
+
+        .location-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        .map-card {
+            flex: 2;
+            min-width: 280px;
+            padding: 1rem;
+            border: 1px solid #dcaa97;
+        }
+        .details-card {
+            flex: 1.2;
+            padding: 1.8rem;
+            border: 1px solid #dcaa97;
+        }
+        .details-card h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.9rem;
+            border-left: 5px solid #ce6b50;
+            padding-left: 1rem;
+            margin-bottom: 1.5rem;
+            color: #3a2626;
+        }
+        .info-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.3rem;
+            font-size: 0.95rem;
+            color: #4d3630;
+        }
+        .info-row i {
+            width: 32px;
+            font-size: 1.3rem;
+            color: #ce6b50;
+        }
+        .gothic-badge {
+            background: #f5e6dfcc;
+            border-radius: 60px;
+            padding: 8px 18px;
+            display: inline-block;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            font-weight: 600;
+            color: #7e4236;
+        }
+
+        .extras-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        .extra-tile {
+            flex: 1;
+            padding: 1.4rem;
+            text-align: center;
+            border: 1px solid #e2bcab;
+            transition: transform 0.2s, background 0.2s;
+            cursor: pointer;
+            background: rgba(255, 252, 248, 0.94);
+        }
+        .extra-tile:hover {
+            transform: translateY(-5px);
+            border-color: #ce6b50;
+            background: rgba(255, 248, 240, 0.98);
+        }
+        .extra-tile i {
+            font-size: 2.3rem;
+            color: #ce6b50;
+            margin-bottom: 0.8rem;
+        }
+
+        /* bright map container */
+        #chromeMap {
+            height: 420px;
+            width: 100%;
+            border-radius: 28px;
+            border: 2px solid #dc9a83;
+            background: #fff3ea;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+        }
+
+        .footer {
+            margin-top: 3rem;
+            padding: 1.2rem 1.8rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: #4b3430;
+            border: 1px solid #e1bcae;
+        }
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+        }
+        .footer-links span {
+            cursor: pointer;
+            transition: 0.2s;
+            font-weight: 500;
+        }
+        .footer-links span:hover {
+            color: #ce6b50;
+        }
+
+        /* MODAL bright & clean */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(30, 20, 18, 0.5);
+            backdrop-filter: blur(6px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: #fffef9;
+            max-width: 480px;
+            width: 90%;
+            border-radius: 40px;
+            padding: 2rem;
+            border: 2px solid #ce6b50;
+            text-align: center;
+            color: #2d1f1c;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.15);
+        }
+        .modal-content h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+        }
+        .close-modal {
+            background: #ce6b50;
+            border: none;
+            padding: 8px 24px;
+            border-radius: 40px;
+            color: white;
+            cursor: pointer;
+            margin-top: 1.2rem;
+            font-weight: 500;
+        }
+
+        @media (max-width: 780px) {
+            .wrapper { padding: 1rem; }
+            .hero h1 { font-size: 1.8rem; }
+            .top-bar { flex-direction: column; gap: 12px; }
+            .nav-links { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- BRIGHT WALLPAPER SLIDESHOW — 6 luminous images, change every 5 seconds -->
+<div class="bg-slideshow" id="bgSlideshow">
+    <!-- radiant, light-filled images: bright showroom, golden hour, boutique interior, chrome hearts vibe but fresh -->
+    <div class="bg-slide active" style="background-image: url('data:image/jpeg;base64,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');"></div>
+    <div class="bg-slide" style="background-image: url('data:image/jpeg;base64,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');"></div>
+    <div class="bg-slide" style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQi4xksg457ZTcx7efJG88diiXHSW3SmSrOWA&s');"></div>
+    <div class="bg-slide" style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUYI583FbtCB08DTvZ0Tqq1PGCnljHTAefdA&s');"></div>
+    <div class="bg-slide" style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyQGuqqZIyaOY75pW1xGqlOpT81YtirMAhPg&s');"></div>
+    <div class="bg-slide" style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8iGaBeQNN0k1ev1r6z3DWwW4myOgZGxjE5Q&s');"></div>
+</div>
+
+<div class="wrapper">
+    <!-- top bar with logo + interactive search -->
+    <div class="top-bar">
+        <div class="logo-box">
+            <img id="brandLogoImg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 130 66'%3E%3Crect width='130' height='66' fill='%23fdf3e6' rx='16' stroke='%23ce6b50' stroke-width='1.5'/%3E%3Ctext x='16' y='44' font-family='Georgia' font-size='28' font-weight='bold' fill='%239e3c2c'%3E⚜️ CHROME%3C/text%3E%3Ctext x='78' y='44' font-family='Georgia' font-size='27' fill='%23ce6b50'%3E♥%3C/text%3E%3C/svg%3E" alt="Chrome Hearts bright logo">
+            <span class="logo-text">BRIGHT ATELIER</span>
+        </div>
+        <div class="nav-links">
+            <a id="navHomeBtn">HOME</a>
+            <a id="navAboutBtn">ABOUT</a>
+            <a id="navProductsBtn">PRODUCTS</a>
+            <a id="navContactBtn">CONTACT</a>
+            <a id="navLocationBtn">LOCATION</a>
+        </div>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search rings, silver, hoodie, atelier...">
+            <button id="searchBtn"><i class="fas fa-search"></i> Find</button>
+        </div>
+    </div>
+
+    <div class="hero" id="heroSection">
+        <h1 id="dynamicTitle">CHROME HEARTS • GABORONE FLAGSHIP</h1>
+        <p id="dynamicSubtitle">Radiant rebellion • sterling silver • handcrafted with light & shadow</p>
+    </div>
+
+    <!-- dynamic content injected by JS (map + location / home etc) -->
+    <div id="dynamicContent"></div>
+
+    <div class="footer">
+        <div>© 2025 CHROME HEARTS BOTSWANA — LUMINOUS GOTHIC LEGACY</div>
+        <div class="footer-links">
+            <span id="copyrightModalBtn">COPYRIGHT</span>
+            <span id="legalModalBtn">LEGAL</span>
+            <span id="privacyModalBtn">PRIVACY</span>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for popups -->
+<div id="infoModal" class="modal">
+    <div class="modal-content">
+        <h3 id="modalTitle">INFO</h3>
+        <p id="modalText"></p>
+        <button class="close-modal" id="closeModalBtn">Close</button>
+    </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    // ---------- 1. BRIGHT BACKGROUND SLIDESHOW (6 images, rotating every 5 seconds) ----------
+    const bgSlides = document.querySelectorAll('#bgSlideshow .bg-slide');
+    let currentBgIdx = 0;
+    if (bgSlides.length) {
+        setInterval(() => {
+            bgSlides[currentBgIdx].classList.remove('active');
+            currentBgIdx = (currentBgIdx + 1) % bgSlides.length;
+            bgSlides[currentBgIdx].classList.add('active');
+        }, 5000);  // change every 5 seconds - smooth & bright
+    }
+
+    // ---------- GLOBALS ----------
+    let chromeMap = null;          // leaflet map instance
+    let currentView = "location";  // default view: location includes map
+
+    const dynamicContainer = document.getElementById('dynamicContent');
+    const heroTitle = document.getElementById('dynamicTitle');
+    const heroSub = document.getElementById('dynamicSubtitle');
+
+    // ---------- CONTENT TEMPLATES (bright & informative) ----------
+    function getLocationHTML() {
+        return `
+            <div class="location-grid">
+                <div class="map-card">
+                    <div id="chromeMap" style="height: 420px; width: 100%; border-radius: 28px;"></div>
+                    <div class="gothic-badge" style="margin-top: 1rem; text-align: center;"><i class="fas fa-map-marker-alt"></i> Gaborone International Commerce Park • Flagship Boutique</div>
+                </div>
+                <div class="details-card">
+                    <h3><i class="fas fa-store"></i> CHROME HEARTS BOTSWANA</h3>
+                    <div class="info-row"><i class="fas fa-map-marker-alt"></i> Plot 179, Gaborone International Commerce Park, Gaborone, Botswana</div>
+                    <div class="info-row"><i class="fas fa-clock"></i> Mon - Sat: 10:00 – 19:00 | Sun: 12:00 – 17:00</div>
+                    <div class="info-row"><i class="fas fa-phone-alt"></i> +267 391 2345</div>
+                    <div class="info-row"><i class="fas fa-envelope"></i> botswana@chromehearts.com</div>
+                    <div class="info-row"><i class="fas fa-globe"></i> www.chromehearts.co.bw</div>
+                    <div class="gothic-badge" style="margin-top: 1rem;">✦ LIGHT-FILLED ATELIER • PRIVATE APPOINTMENTS ✦</div>
+                </div>
+            </div>
+            <div class="extras-section">
+                <div class="extra-tile" id="amenitiesTile"><i class="fas fa-concierge-bell"></i><h4>Boutique Amenities</h4><p>Bright fitting suites, silver bar, champagne & natural light lounge.</p></div>
+                <div class="extra-tile" id="transportTile"><i class="fas fa-car"></i><h4>Transport & Access</h4><p>Free parking, wheelchair access, VIP shuttle from major hotels.</p></div>
+                <div class="extra-tile" id="designerTile"><i class="fas fa-crown"></i><h4>Designer Atelier</h4><p>On-site master silversmith & leather consultations (by appointment).</p></div>
+            </div>
+        `;
+    }
+
+    function getHomeHTML() {
+        return `
+            <div class="location-grid">
+                <div class="map-card" style="background: rgba(255,252,245,0.96);">
+                    <div style="padding: 2rem; text-align:center;">
+                        <i class="fas fa-sun" style="font-size: 4rem; color:#ce6b50;"></i>
+                        <h2 style="margin: 1rem 0;">Gothic Reimagined in Light</h2>
+                        <p>Chrome Hearts Botswana merges rock'n'roll opulence with radiant African sunlight. Handcrafted silver, bespoke leather, and rebellious soul. Explore limited editions and eternal craftsmanship.</p>
+                        <div class="gothic-badge" style="margin-top: 1rem;">✦ BOTSWANA EDITION • BRIGHT HERITAGE ✦</div>
+                    </div>
+                </div>
+                <div class="details-card">
+                    <h3>✦ BOUTIQUE HIGHLIGHTS</h3>
+                    <div class="info-row"><i class="fas fa-gem"></i> Exclusive silver & leather collections</div>
+                    <div class="info-row"><i class="fas fa-music"></i> Artist collaborations & pop-ups</div>
+                    <div class="info-row"><i class="fas fa-hand-sparkles"></i> Bespoke jewelry engraving studio</div>
+                    <div class="info-row"><i class="fas fa-wine-glass-alt"></i> VIP terrace & private viewings</div>
+                    <div class="gothic-badge">New arrivals: "Solar Cross" capsule</div>
+                </div>
+            </div>
+            <div class="extras-section">
+                <div class="extra-tile"><i class="fas fa-tag"></i><h4>Seasonal Drops</h4><p>Join waitlist for linen hoodies & silver runes.</p></div>
+                <div class="extra-tile"><i class="fas fa-calendar-alt"></i><h4>Events</h4><p>Gothic trunk shows & silversmith workshops.</p></div>
+                <div class="extra-tile"><i class="fas fa-heart"></i><h4>Collectors Circle</h4><p>Private previews & early access.</p></div>
+            </div>
+        `;
+    }
+
+    function getAboutHTML() {
+        return `
+            <div class="location-grid">
+                <div class="map-card">
+                    <div style="padding: 1rem;"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 340 200'%3E%3Crect width='340' height='200' fill='%23f6ede5'/%3E%3Ctext x='55' y='110' fill='%239e3c2c' font-size='19' font-weight='bold'%3ECHROME HEARTS • 1988%3C/text%3E%3C/svg%3E" style="width:100%; border-radius:28px; border:2px solid #ce6b50;"></div>
+                    <div class="gothic-badge" style="margin-top:12px;">⚜️ RICHARD STARK • FOUNDER ⚜️</div>
+                </div>
+                <div class="details-card">
+                    <h3>✦ THE LEGACY IN LIGHT</h3>
+                    <div class="info-row"><i class="fas fa-cross"></i> From Hollywood to Botswana: dark romance meets sunshine</div>
+                    <div class="info-row"><i class="fas fa-hammer"></i> Each piece hand-finished in LA + Gaborone atelier</div>
+                    <div class="info-row"><i class="fas fa-skull-crossbones"></i> Silver, exotic woods, diamonds & soulful symbols</div>
+                    <div class="info-row"><i class="fas fa-globe-africa"></i> African flagship merges gothic with vibrant local artistry</div>
+                    <p style="margin-top: 12px;">Driven by uncompromising artistry, Chrome Hearts defines rebel luxury.</p>
+                </div>
+            </div>
+            <div class="extras-section">
+                <div class="extra-tile"><i class="fas fa-trophy"></i><h4>Milestones</h4><p>Decades of craftsmanship, icons & global influence.</p></div>
+                <div class="extra-tile"><i class="fas fa-landmark"></i><h4>Philanthropy</h4><p>Supporting Botswana youth silversmith programs.</p></div>
+                <div class="extra-tile"><i class="fas fa-palette"></i><h4>Atelier Fusion</h4><p>Gothic & African motif collaborations.</p></div>
+            </div>
+        `;
+    }
+
+    function getProductsHTML() {
+        return `
+            <div class="location-grid">
+                <div class="map-card">
+                    <div style="display:flex; flex-wrap:wrap; gap:1.5rem; justify-content:center;">
+                        <div style="text-align:center;"><i class="fas fa-ring" style="font-size: 3.2rem; color:#ce6b50;"></i><p>Sterling Rings</p></div>
+                        <div style="text-align:center;"><i class="fas fa-vest" style="font-size: 3.2rem; color:#ce6b50;"></i><p>Leather Jackets</p></div>
+                        <div style="text-align:center;"><i class="fas fa-gem" style="font-size: 3.2rem; color:#ce6b50;"></i><p>Cross Pendants</p></div>
+                        <div style="text-align:center;"><i class="fas fa-shoe-prints" style="font-size: 3.2rem; color:#ce6b50;"></i><p>Boots & Sneakers</p></div>
+                    </div>
+                </div>
+                <div class="details-card">
+                    <h3>✦ ICONIC COLLECTIONS</h3>
+                    <div class="info-row"><i class="fas fa-infinity"></i> Cemetery • 925 Silver & Onyx</div>
+                    <div class="info-row"><i class="fas fa-crown"></i> Royal Cross & Fuck You rings</div>
+                    <div class="info-row"><i class="fas fa-fire"></i> Chrome Hearts x Matty Boy</div>
+                    <div class="info-row"><i class="fas fa-tshirt"></i> Hoodies, denim, trucker hats</div>
+                    <div class="gothic-badge">Limited stock – bespoke orders available</div>
+                </div>
+            </div>
+            <div class="extras-section">
+                <div class="extra-tile"><i class="fas fa-chalkboard-user"></i><h4>Custom Engraving</h4><p>Gothic runes & initials on silver.</p></div>
+                <div class="extra-tile"><i class="fas fa-swatchbook"></i><h4>Lookbook</h4><p>Digital FW25 collection preview.</p></div>
+                <div class="extra-tile"><i class="fas fa-truck-fast"></i><h4>Worldwide Shipping</h4><p>From Botswana flagship express delivery.</p></div>
+            </div>
+        `;
+    }
+
+    function getContactHTML() {
+        return `
+            <div class="location-grid">
+                <div class="map-card">
+                    <div style="padding: 1.5rem; text-align:center;">
+                        <i class="fas fa-headset" style="font-size: 3.2rem; color:#ce6b50;"></i>
+                        <h3>Sunlit Concierge</h3>
+                        <p>Our specialists assist 24/6 via email & hotline.</p>
+                        <hr style="margin:1rem 0; border-color:#e6cbbc;">
+                        <p><i class="fas fa-phone-alt"></i> +267 391 2345</p>
+                        <p><i class="fas fa-envelope"></i> concierge@chromehearts.co.bw</p>
+                    </div>
+                </div>
+                <div class="details-card">
+                    <h3>✦ VISIT OR CONNECT</h3>
+                    <div class="info-row"><i class="fas fa-map-pin"></i> Plot 179, Gaborone International Commerce Park</div>
+                    <div class="info-row"><i class="fab fa-instagram"></i> @chromehearts_botswana</div>
+                    <div class="info-row"><i class="fab fa-facebook"></i> Chrome Hearts Botswana</div>
+                    <div class="info-row"><i class="fas fa-clock"></i> Mon–Sat: 10AM–7PM</div>
+                    <div class="gothic-badge">📅 Book private appointment: +267 391 2345 ext. 2</div>
+                </div>
+            </div>
+            <div class="extras-section">
+                <div class="extra-tile"><i class="fas fa-comment-dots"></i><h4>Live Chat</h4><p>Available 9AM–9PM CAT.</p></div>
+                <div class="extra-tile"><i class="fas fa-map-marked-alt"></i><h4>Directions</h4><p>Interactive map with GPS route.</p></div>
+                <div class="extra-tile"><i class="fas fa-gift"></i><h4>E-Gothic Cards</h4><p>Digital gift cards for exclusive items.</p></div>
+            </div>
+        `;
+    }
+
+    // ---------- RENDER engine with map initialization for location view ----------
+    function renderView(view) {
+        let contentHTML = "";
+        if (view === "home") {
+            contentHTML = getHomeHTML();
+            heroTitle.innerText = "⚜️ CHROME HEARTS • LUMINOUS GOTHIC ⚜️";
+            heroSub.innerText = "Rebellion meets light • handcrafted elegance in Botswana";
+        } else if (view === "about") {
+            contentHTML = getAboutHTML();
+            heroTitle.innerText = "THE LEGACY • SINCE 1988 • BRIGHT REBELLION";
+            heroSub.innerText = "Richard Stark's vision of radiant high-end craftsmanship";
+        } else if (view === "products") {
+            contentHTML = getProductsHTML();
+            heroTitle.innerText = "SILVER, LEATHER & ETERNAL FLAME";
+            heroSub.innerText = "Discover iconoclast collections under African light";
+        } else if (view === "contact") {
+            contentHTML = getContactHTML();
+            heroTitle.innerText = "CONNECT WITH RADICAL ELEGANCE";
+            heroSub.innerText = "Private consultations & global inquiries";
+        } else {  // location (default)
+            contentHTML = getLocationHTML();
+            heroTitle.innerText = "CHROME HEARTS • BOTSWANA FLAGSHIP • BRIGHT ATELIER";
+            heroSub.innerText = "Plot 179, Gaborone International Commerce Park — open daily";
+        }
+        dynamicContainer.innerHTML = contentHTML;
+        currentView = view;
+
+        if (view === "location") {
+            setTimeout(() => {
+                if (chromeMap) {
+                    chromeMap.remove();
+                    chromeMap = null;
+                }
+                const mapDiv = document.getElementById('chromeMap');
+                if (mapDiv) {
+                    // LIGHT & BRIGHT MAP TILE (CartoDB Voyager / light)
+                    chromeMap = L.map('chromeMap').setView([-24.6282, 25.9231], 15);
+                    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> & CartoDB',
+                        subdomains: 'abcd',
+                        maxZoom: 19
+                    }).addTo(chromeMap);
+                    // custom bright marker (sunny / gothic cross)
+                    const brightIcon = L.divIcon({
+                        html: '<i class="fas fa-sun" style="font-size: 30px; color: #e0886a; text-shadow: 0 0 4px white;"></i>',
+                        iconSize: [32, 32],
+                        className: 'bright-marker'
+                    });
+                    const marker = L.marker([-24.6282, 25.9231], { icon: brightIcon }).addTo(chromeMap);
+                    marker.bindPopup('<b>⚜️ CHROME HEARTS BOTSWANA ⚜️</b><br>Plot 179, Gaborone Int. Commerce Park<br>✨ Bright flagship open now').openPopup();
+                    L.circle([-24.6282, 25.9231], { radius: 220, color: '#ce6b50', weight: 2, fillOpacity: 0.12, fillColor: '#fadbcb' }).addTo(chromeMap);
+                }
+            }, 80);
+        } else {
+            if (chromeMap) { chromeMap.remove(); chromeMap = null; }
+        }
+        attachExtraTileEvents();
+    }
+
+    function attachExtraTileEvents() {
+        const amenities = document.getElementById('amenitiesTile');
+        const transport = document.getElementById('transportTile');
+        const designer = document.getElementById('designerTile');
+        if (amenities) amenities.addEventListener('click', () => showPopup('BOUTIQUE AMENITIES', 'Bright fitting suites, silver engraving bar, champagne lounge & natural light VIP area.'));
+        if (transport) transport.addEventListener('click', () => showPopup('TRANSPORT & ACCESS', 'Free parking (70 spaces), wheelchair access, VIP shuttle from Hilton & Cresta hotels. Airport 12 min.'));
+        if (designer) designer.addEventListener('click', () => showPopup('DESIGNER ATELIER', 'On-site silversmith consultations. Custom orders for rings & leather. Appointment required.'));
+        const allTiles = document.querySelectorAll('.extra-tile');
+        allTiles.forEach(tile => {
+            if (!tile.id) {
+                tile.addEventListener('click', () => showPopup('✦ EXTRA INSIGHT ✦', tile.querySelector('h4')?.innerText + ': ' + tile.querySelector('p')?.innerText));
+            }
+        });
+    }
+
+    // Modal handling
+    const modal = document.getElementById('infoModal');
+    const modalTitleElem = document.getElementById('modalTitle');
+    const modalTextElem = document.getElementById('modalText');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    function showPopup(title, message) {
+        modalTitleElem.innerText = title;
+        modalTextElem.innerText = message;
+        modal.style.display = 'flex';
+    }
+    closeModalBtn.addEventListener('click', () => modal.style.display = 'none');
+    window.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
+
+    // footer legal popups
+    document.getElementById('copyrightModalBtn').addEventListener('click', () => showPopup('COPYRIGHT DETAILS', '© Chrome Hearts & Botswana Atelier. All creative assets, brand identity and designs are protected. All rights reserved.'));
+    document.getElementById('legalModalBtn').addEventListener('click', () => showPopup('LEGAL INFORMATION', 'Terms of use apply. Chrome Hearts Botswana holds official license. Final sale on limited collections.'));
+    document.getElementById('privacyModalBtn').addEventListener('click', () => showPopup('PRIVACY POLICY', 'Your data is used solely for inquiries & newsletters. GDPR compliant. We do not share with third parties.'));
+
+    // navigation binding
+    document.getElementById('navHomeBtn').addEventListener('click', () => renderView('home'));
+    document.getElementById('navAboutBtn').addEventListener('click', () => renderView('about'));
+    document.getElementById('navProductsBtn').addEventListener('click', () => renderView('products'));
+    document.getElementById('navContactBtn').addEventListener('click', () => renderView('contact'));
+    document.getElementById('navLocationBtn').addEventListener('click', () => renderView('location'));
+
+    // SEARCH functionality (bright & interactive)
+    const searchInput = document.getElementById('searchInput');
+    const searchButton = document.getElementById('searchBtn');
+    function performSearch() {
+        const query = searchInput.value.trim().toLowerCase();
+        if (!query) {
+            showPopup("🔍 SEARCH", "Enter keyword: rings, silver, location, hoodie, atelier, leather...");
+            return;
+        }
+        const pageText = document.body.innerText.toLowerCase();
+        if (pageText.includes(query)) {
+            showPopup("🔍 RESULTS FOUND", `Matches for "${query}" found on this page. Visit our products or contact boutique for details.`);
+        } else {
+            showPopup("🔍 NO DIRECT MATCH", `No direct match for "${query}". Try 'silver', 'Gaborone', 'leather' or browse our collections.`);
+        }
+    }
+    searchButton.addEventListener('click', performSearch);
+    searchInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') performSearch(); });
+
+    // initial render: location + interactive map
+    renderView('location');
+</script>
+</body>
+</html>

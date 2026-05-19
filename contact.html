@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Chrome Hearts | Ethereal Concierge — White Gothic</title>
+    <!-- Google Fonts: Gothic & Modern -->
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f4f2f0;
+            color: #1e1a1c;
+            line-height: 1.5;
+            scroll-behavior: smooth;
+        }
+
+        /* BACKGROUND SLIDESHOW (6 images, 6s transition) - FULLY VISIBLE */
+        .bg-slideshow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            overflow: hidden;
+        }
+        .bg-slideshow .bg-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center 30%;
+            opacity: 0;
+            transition: opacity 1.8s ease-in-out;
+            filter: brightness(0.92) contrast(1.02) grayscale(0.1);
+        }
+        .bg-slideshow .bg-slide.active {
+            opacity: 1;
+        }
+        /* TRANSPARENT WHITE OVERLAY - more translucent, pure white with low opacity */
+        .bg-slideshow::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(2px);
+            pointer-events: none;
+            z-index: 1;
+            transition: background 0.3s ease;
+        }
+        /* Optional toggle (still available but default is transparent white) */
+        .bg-slideshow.dark-override::after {
+            background: rgba(70, 20, 30, 0.7);
+        }
+
+        .wrapper {
+            position: relative;
+            z-index: 2;
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 1.5rem 2rem 3rem;
+        }
+
+        /* Top Bar – WHITE / LIGHT THEME */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid rgba(160, 140, 140, 0.5);
+            padding-bottom: 1rem;
+            background: rgba(255, 250, 245, 0.75);
+            backdrop-filter: blur(10px);
+            border-radius: 48px;
+            padding: 12px 24px;
+        }
+        .logo-box {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(4px);
+            padding: 6px 18px;
+            border-radius: 40px;
+            border-left: 3px solid #b88686;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+            transition: 0.2s;
+        }
+        .logo-box img {
+            max-height: 55px;
+            width: auto;
+            display: block;
+            filter: drop-shadow(0 1px 4px rgba(0,0,0,0.1));
+        }
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+        .nav-links a {
+            color: #2c2024;
+            text-decoration: none;
+            font-weight: 600;
+            transition: 0.2s;
+            font-size: 0.95rem;
+            border-bottom: 1px solid transparent;
+            letter-spacing: 0.5px;
+        }
+        .nav-links a:hover {
+            color: #b33b3b;
+            border-bottom-color: #b38b8b;
+        }
+        /* SEARCH CONTAINER – white glass */
+        .search-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(8px);
+            border-radius: 60px;
+            padding: 5px 15px;
+            border: 1px solid rgba(150, 120, 120, 0.4);
+        }
+        .search-container input {
+            background: transparent;
+            border: none;
+            padding: 8px 6px;
+            color: #1e1418;
+            font-size: 0.85rem;
+            width: 170px;
+            outline: none;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+        }
+        .search-container input::placeholder {
+            color: #866f6f;
+            font-style: italic;
+        }
+        .search-container i {
+            color: #ac6f6f;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .search-container i:hover {
+            color: #b33b3b;
+        }
+
+        /* Contact Hero – white/gold */
+        .contact-hero {
+            text-align: center;
+            margin: 1.5rem 0 2rem;
+        }
+        .contact-hero h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 4.2rem;
+            letter-spacing: 4px;
+            background: linear-gradient(135deg, #b37b7b, #4f2a2a);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 10px rgba(255,255,200,0.5);
+        }
+        .contact-hero p {
+            font-size: 1.1rem;
+            color: #2c1e22;
+            margin-top: 0.5rem;
+            border-top: 1px solid #d4b6b6;
+            display: inline-block;
+            padding-top: 0.7rem;
+            background: rgba(255,250,240,0.5);
+            backdrop-filter: blur(4px);
+            border-radius: 60px;
+            padding: 0.5rem 1.5rem;
+        }
+
+        /* Overlay controls – light mode */
+        .overlay-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin: 1rem 0 1.5rem;
+            flex-wrap: wrap;
+        }
+        .overlay-btn {
+            background: rgba(255, 245, 240, 0.85);
+            backdrop-filter: blur(8px);
+            border: 1px solid #c9a5a5;
+            padding: 6px 20px;
+            border-radius: 40px;
+            color: #3a292e;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.8rem;
+        }
+        .overlay-btn i {
+            margin-right: 6px;
+        }
+        .overlay-btn:hover {
+            background: #e2c5c5;
+            color: #2f1a1a;
+            border-color: #b55a5a;
+        }
+
+        /* Main contact layout – translucent white glass cards */
+        .contact-main {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin: 2rem 0 2rem;
+        }
+        .contact-info-panel {
+            flex: 1.2;
+            background: rgba(255, 248, 245, 0.75);
+            backdrop-filter: blur(12px);
+            border-radius: 36px;
+            padding: 2rem;
+            border: 1px solid rgba(180, 140, 140, 0.5);
+            box-shadow: 0 20px 35px -10px rgba(0,0,0,0.1);
+        }
+        .contact-info-panel h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.2rem;
+            color: #8a4f4f;
+            border-left: 4px solid #b56363;
+            padding-left: 1rem;
+            margin-bottom: 2rem;
+        }
+        .info-block {
+            margin-bottom: 2rem;
+        }
+        .info-block h3 {
+            font-size: 1.4rem;
+            color: #754545;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .info-block h3 i {
+            font-size: 1.6rem;
+            color: #b35b5b;
+        }
+        .contact-detail-item {
+            margin: 0.8rem 0;
+            padding-left: 1rem;
+            border-left: 2px solid #d9a3a3;
+            transition: 0.2s;
+        }
+        .contact-detail-item a {
+            color: #2f2125;
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .contact-detail-item a:hover {
+            color: #b33b3b;
+            text-shadow: 0 0 2px rgba(0,0,0,0.1);
+        }
+        .contact-detail-item span {
+            color: #3f2c30;
+        }
+        .social-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.2rem;
+            margin-top: 0.8rem;
+        }
+        .social-card {
+            background: rgba(245, 235, 230, 0.9);
+            border-radius: 48px;
+            padding: 8px 20px;
+            transition: 0.2s;
+            border: 1px solid #dbb6b6;
+        }
+        .social-card a {
+            color: #633e44;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+        }
+        .social-card:hover {
+            background: #e2c5c5;
+            transform: translateY(-2px);
+        }
+        .social-card:hover a {
+            color: #2c1a1a;
+        }
+
+        /* Interactive card – white/light */
+        .interactive-card {
+            flex: 0.9;
+            background: rgba(255, 250, 245, 0.8);
+            backdrop-filter: blur(12px);
+            border-radius: 36px;
+            padding: 2rem;
+            border: 1px solid rgba(200, 160, 160, 0.6);
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+        .interactive-card h3 {
+            font-size: 1.8rem;
+            font-family: 'Cormorant Garamond', serif;
+            color: #a15959;
+        }
+        .quick-chat {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .quick-chat input, .quick-chat textarea {
+            background: rgba(255, 245, 240, 0.9);
+            border: 1px solid #ccaeae;
+            padding: 12px;
+            border-radius: 28px;
+            color: #2d1f22;
+            font-family: inherit;
+            font-weight: 500;
+        }
+        .quick-chat input::placeholder, .quick-chat textarea::placeholder {
+            color: #a57a7a;
+        }
+        .quick-chat button {
+            background: #ad7a7a;
+            border: none;
+            padding: 12px;
+            border-radius: 40px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .quick-chat button:hover {
+            background: #bb5e5e;
+            letter-spacing: 1px;
+            color: #f9ecec;
+        }
+        .callback-section {
+            margin-top: 0.5rem;
+            border-top: 1px dashed #dbb4b4;
+            padding-top: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .callback-section input {
+            background: rgba(255, 245, 240, 0.9);
+            border: 1px solid #d6aeae;
+            padding: 12px;
+            border-radius: 40px;
+            color: #2d1f22;
+            font-family: inherit;
+            font-weight: 500;
+        }
+        .callback-section button {
+            background: #a56868;
+            border: 1px solid #f1cfcf;
+            border-radius: 40px;
+            padding: 12px;
+            cursor: pointer;
+            color: white;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        .callback-section button:hover {
+            background: #c36b6b;
+            color: #1c0e0e;
+        }
+        .live-status {
+            margin-top: 0rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(245, 230, 225, 0.8);
+            padding: 8px 18px;
+            border-radius: 60px;
+            justify-content: center;
+            color: #704545;
+        }
+        .pulse {
+            width: 12px;
+            height: 12px;
+            background-color: #4f9e6b;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #8fcaab;
+            animation: pulse-animation 1.5s infinite;
+        }
+        @keyframes pulse-animation {
+            0% { opacity: 0.5; transform: scale(0.9);}
+            100% { opacity: 1; transform: scale(1.2);}
+        }
+
+        /* Map preview – light */
+        .map-preview {
+            margin: 2rem 0;
+            background: rgba(255, 248, 242, 0.7);
+            backdrop-filter: blur(8px);
+            border-radius: 32px;
+            padding: 1.2rem;
+            text-align: center;
+            border: 1px solid #e0bfbf;
+            color: #412f33;
+        }
+        .map-preview i {
+            color: #b57373;
+        }
+        .footer {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e2c5c5;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: #5a4146;
+            background: rgba(255, 250, 245, 0.6);
+            backdrop-filter: blur(8px);
+            border-radius: 50px;
+            padding: 1rem 2rem;
+        }
+        .footer-links span {
+            cursor: pointer;
+            margin-left: 1.5rem;
+            transition: 0.2s;
+            font-weight: 500;
+        }
+        .footer-links span:hover {
+            color: #b33b3b;
+        }
+        /* Modal – still elegant but whiteish */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(12px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: #fffaf7ee;
+            max-width: 450px;
+            width: 90%;
+            border-radius: 32px;
+            padding: 2rem;
+            border: 1px solid #cea6a6;
+            text-align: center;
+            color: #2d1e22;
+            box-shadow: 0 20px 30px rgba(0,0,0,0.2);
+        }
+        .modal-content h3 {
+            color: #b15555;
+        }
+        .close-modal {
+            background: #b47b7b;
+            border: none;
+            padding: 8px 24px;
+            border-radius: 40px;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .close-modal:hover {
+            background: #9b5858;
+        }
+        @media (max-width: 780px) {
+            .wrapper { padding: 1rem; }
+            .contact-main { flex-direction: column; }
+            .search-container input { width: 130px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- BACKGROUND SLIDESHOW: exactly 6 images, rotate every 6 seconds -->
+<div class="bg-slideshow" id="bgSlideshow">
+    <div class="bg-slide active" style="background-image: url('https://images.pexels.com/photos/4482900/pexels-photo-4482900.jpeg?auto=compress&cs=tinysrgb&w=1600');"></div>
+    <div class="bg-slide" style="background-image: url('https://images.pexels.com/photos/2072165/pexels-photo-2072165.jpeg?auto=compress&cs=tinysrgb&w=1600');"></div>
+    <div class="bg-slide" style="background-image: url('https://images.pexels.com/photos/1303098/pexels-photo-1303098.jpeg?auto=compress&cs=tinysrgb&w=1600');"></div>
+    <div class="bg-slide" style="background-image: url('https://images.pexels.com/photos/1275395/pexels-photo-1275395.jpeg?auto=compress&cs=tinysrgb&w=1600');"></div>
+    <div class="bg-slide" style="background-image: url('https://images.pexels.com/photos/1034662/pexels-photo-1034662.jpeg?auto=compress&cs=tinysrgb&w=1600');"></div>
+    <div class="bg-slide" style="background-image: url('https://images.pexels.com/photos/2811087/pexels-photo-2811087.jpeg?auto=compress&cs=tinysrgb&w=1600');"></div>
+</div>
+
+<div class="wrapper">
+    <!-- Top Bar with Logo & typeable SEARCHBAR -->
+    <div class="top-bar">
+        <div class="logo-box">
+            <img src="https://upload.wikimedia.org/wikipedia/en/thumb/0/0c/Chrome_Hearts_logo.svg/2560px-Chrome_Hearts_logo.svg.png" alt="Chrome Hearts Logo" id="brandLogoImg">
+        </div>
+        <nav></nav>
+        <div class="nav-links">
+            <a href="index.html">HOME</a>
+            <a href="about.html">ABOUT US</a>
+            <a href="products.html">PRODUCTS</a>
+            <a href="contact.html">CONTACTS</a>
+            <a href="location.html">LOCATION</a>
+            </nav>
+        </div>
+        <!-- SEARCH BAR (typeable) -->
+        <div class="search-container">
+            <input type="text" id="globalSearchInput" placeholder="Search rings, hoodies, silver...">
+            <i class="fas fa-search" id="searchIconBtn"></i>
+        </div>
+    </div>
+
+    <!-- Contact Hero -->
+    <div class="contact-hero">
+        <h1>CONTACT <i class="fas fa-feather-alt"></i></h1>
+        <p>Reach our ivory-clad concierge — any time, any place</p>
+    </div>
+
+    <!-- Overlay toggle (default transparent white, but keep option for cherry) -->
+    <div class="overlay-controls">
+        <button class="overlay-btn" id="transparentWhiteOverlayBtn"><i class="fas fa-snowflake"></i> Transparent White (Default)</button>
+        <button class="overlay-btn" id="darkCherryOverlayBtn"><i class="fas fa-tint"></i> Dark Cherry Accent</button>
+    </div>
+
+    <!-- CONTACT INFORMATION: PHONE NUMBERS, EMAIL, SOCIAL MEDIA (all light themed) -->
+    <div class="contact-main">
+        <div class="contact-info-panel">
+            <h2><i class="fas fa-crown"></i> CONTACT INFORMATION</h2>
+            
+            <!-- PHONE NUMBERS -->
+            <div class="info-block">
+                <h3><i class="fas fa-phone-alt"></i> PHONE NUMBERS</h3>
+                <div class="contact-detail-item">
+                    <a href="tel:+26778166218"><i class="fas fa-mobile-alt"></i> +267 78166218</a>
+                </div>
+                <div class="contact-detail-item">
+                    <a href="tel:+26776188332"><i class="fas fa-phone"></i> +267 76188332</a>
+                </div>
+            </div>
+
+            <!-- EMAIL -->
+            <div class="info-block">
+                <h3><i class="fas fa-envelope"></i> EMAIL</h3>
+                <div class="contact-detail-item">
+                    <a href="mailto:chromehearts@gmail.com"><i class="fas fa-paper-plane"></i> chromehearts@gmail.com</a>
+                </div>
+                <div class="contact-detail-item">
+                    <span><i class="fas fa-map-marker-alt"></i> Location: Gaborone, Botswana</span>
+                </div>
+            </div>
+
+            <!-- SOCIAL MEDIA (clickable) -->
+            <div class="info-block">
+                <h3><i class="fas fa-share-alt"></i> SOCIAL MEDIA</h3>
+                <div class="social-links">
+                    <div class="social-card">
+                        <a href="https://instagram.com/chromeheartswear" target="_blank"><i class="fab fa-instagram"></i> Instagram · chromehearts</a>
+                    </div>
+                    <div class="social-card">
+                        <a href="https://facebook.com/chromehearts.co.za" target="_blank"><i class="fab fa-facebook-f"></i> Facebook · chromehearts</a>
+                    </div>
+                    <div class="social-card">
+                        <a href="https://tiktok.com/@chromehearts" target="_blank"><i class="fab fa-tiktok"></i> TikTok · chromehearts</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- LIVE CONCIERGE + CALLBACK with number field -->
+        <div class="interactive-card">
+            <h3><i class="fas fa-comment-dots"></i> IVORY CONCIERGE</h3>
+            <div class="live-status">
+                <div class="pulse"></div>
+                <span>✦ White Glove Support ✦</span>
+            </div>
+            <div class="quick-chat">
+                <input type="text" id="chatName" placeholder="Your name...">
+                <textarea id="chatMsg" rows="3" placeholder="Write your message, we answer swiftly..."></textarea>
+                <button id="sendLiveMsgBtn"><i class="fas fa-feather-alt"></i> Send Raven Message</button>
+            </div>
+            <!-- CALLBACK WITH PHONE INPUT FIELD -->
+            <div class="callback-section">
+                <input type="tel" id="callbackPhoneInput" placeholder="Your phone number (e.g., +267 7XXXXXXX)">
+                <button id="requestCallBtnNew"><i class="fas fa-headset"></i> Request Callback</button>
+                <p style="font-size:0.7rem; color:#a06969;"><i class="fas fa-lock"></i> We'll call within 24h — discreet and elegant.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Map preview -->
+    <div class="map-preview">
+        <i class="fas fa-map-marked-alt" style="font-size:1.8rem;"></i>
+        <p style="margin-top: 0.5rem;"><strong>Flagship Atelier:</strong> Plot 179, Gaborone International Commerce Park, Botswana <br> <span style="font-size:0.8rem;">Also L.A. flagship – by appointment only.</span></p>
+        <button id="openMapBtn" style="background: rgba(255,245,240,0.8); border:1px solid #c29090; border-radius:30px; padding:5px 18px; margin-top:8px; color:#593b3b; cursor:pointer;">View Map Direction <i class="fas fa-arrow-right"></i></button>
+    </div>
+
+    <!-- Footer light -->
+    <div class="footer">
+        <div>© 2026 CHROME HEARTS · LUMINOUS COLLECTION. ALL RIGHTS RESERVED.</div>
+        <div class="footer-links">
+            <span id="copyrightModalBtn">COPYRIGHT</span>
+            <span id="legalModalBtn">LEGAL</span>
+            <span id="privacyModalBtn">PRIVACY</span>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div id="infoModal" class="modal">
+    <div class="modal-content">
+        <h3 id="modalTitle">Info</h3>
+        <p id="modalText"></p>
+        <button class="close-modal" id="closeModalBtn">Close</button>
+    </div>
+</div>
+
+<script>
+    // 1. Background slideshow (6 images, 6 seconds)
+    const bgSlides = document.querySelectorAll('#bgSlideshow .bg-slide');
+    let currentBgIndex = 0;
+    if (bgSlides.length === 6) {
+        setInterval(() => {
+            bgSlides[currentBgIndex].classList.remove('active');
+            currentBgIndex = (currentBgIndex + 1) % bgSlides.length;
+            bgSlides[currentBgIndex].classList.add('active');
+        }, 6000);
+    }
+
+    // 2. OVERLAY controls: default transparent white (already active) / dark cherry optional
+    const bgContainer = document.getElementById('bgSlideshow');
+    const whiteBtn = document.getElementById('transparentWhiteOverlayBtn');
+    const cherryBtn = document.getElementById('darkCherryOverlayBtn');
+    
+    whiteBtn.addEventListener('click', () => {
+        bgContainer.classList.remove('dark-override');
+        showPopup("Overlay Mode", "Transparent White overlay — background images now shine through with pure elegance.");
+    });
+    cherryBtn.addEventListener('click', () => {
+        bgContainer.classList.add('dark-override');
+        showPopup("Overlay Mode", "Dark Cherry accent applied — a gothic whisper but still mostly translucent.");
+    });
+
+    // Modal helper
+    const modal = document.getElementById('infoModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalText = document.getElementById('modalText');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    function showPopup(title, message) {
+        modalTitle.innerText = title;
+        modalText.innerText = message;
+        modal.style.display = 'flex';
+    }
+    closeModalBtn.addEventListener('click', () => modal.style.display = 'none');
+    window.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
+
+    // 3. SEARCHBAR - typeable and functional
+    const searchInput = document.getElementById('globalSearchInput');
+    const searchIcon = document.getElementById('searchIconBtn');
+    function handleSearch() {
+        const query = searchInput.value.trim();
+        if (query === "") {
+            showPopup("🔍 Ethereal Search", "Enter keywords: 'cross pendant', 'leather jacket', 'silver ring'. Our team will guide you.");
+        } else {
+            showPopup("Search Inquiry", `You searched for: "${query}". A Chrome Hearts specialist will reach out shortly.`);
+        }
+    }
+    searchIcon.addEventListener('click', handleSearch);
+    searchInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleSearch(); });
+
+    // 4. Navigable links (popup info)
+    const navLinks = document.querySelectorAll('.nav-links a');
+    navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const navVal = link.getAttribute('data-nav');
+            if (navVal === 'home') showPopup("HOME", "Enter the luminous realm of Chrome Hearts — where gothic meets light.");
+            else if (navVal === 'about') showPopup("ABOUT US", "Since 1988, handcrafted rebellion. Now in ivory tones, always legendary.");
+            else if (navVal === 'product') showPopup("PRODUCTS", "Discover sterling silver, fine leather, and signature crosses.");
+            else if (navVal === 'contact') showPopup("CONTACT", "You're on the contact page. Use phone, email, or the live concierge.");
+            else if (navVal === 'location') showPopup("LOCATION", "Gaborone, Botswana & Los Angeles flagship. Visit by appointment only.");
+        });
+    });
+
+    // 5. Live chat message
+    document.getElementById('sendLiveMsgBtn').addEventListener('click', () => {
+        const name = document.getElementById('chatName').value.trim();
+        const msg = document.getElementById('chatMsg').value.trim();
+        if (!name && !msg) {
+            showPopup("🕯️ Silent Whisper", "Please leave your name or a message so the concierge can answer.");
+        } else {
+            showPopup("✧ Message Sent ✧", `Thank you ${name || "dear guest"}. Your words have been delivered: "${msg.substring(0,120)}". We'll respond within 24h.`);
+            document.getElementById('chatName').value = '';
+            document.getElementById('chatMsg').value = '';
+        }
+    });
+
+    // 6. REQUEST CALLBACK: user types phone number
+    const callbackBtn = document.getElementById('requestCallBtnNew');
+    const phoneInput = document.getElementById('callbackPhoneInput');
+    callbackBtn.addEventListener('click', () => {
+        const phoneNumber = phoneInput.value.trim();
+        if (!phoneNumber) {
+            showPopup("📞 Callback Required", "Please type your phone number so our concierge can reach you.");
+        } else {
+            showPopup("Callback Scheduled", `We have your number: ${phoneNumber}. A Chrome Hearts specialist will call you within 48 hours.`);
+            phoneInput.value = '';
+        }
+    });
+
+    // 7. Map button
+    document.getElementById('openMapBtn').addEventListener('click', () => {
+        showPopup("🗺️ CHROME HEARTS MAP", "Boutique HQ: Gaborone International Commerce Park, Plot 179, Botswana. For navigation, please contact us for precise directions.");
+    });
+
+    // 8. Footer legal
+    document.getElementById('copyrightModalBtn').addEventListener('click', () => showPopup("COPYRIGHT", "© 2026 Chrome Hearts Streetwear. All designs, logos, and assets are property of Chrome Hearts LLC."));
+    document.getElementById('legalModalBtn').addEventListener('click', () => showPopup("LEGAL INFORMATION", "Terms: All sales final on limited editions. Disputes governed by Botswana jurisdiction."));
+    document.getElementById('privacyModalBtn').addEventListener('click', () => showPopup("PRIVACY POLICY", "Your contact details are never shared. We respect your data with utmost discretion."));
+
+    // email copy helper
+    const emailLink = document.querySelector('a[href="mailto:chromehearts@gmail.com"]');
+    if(emailLink) {
+        emailLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            navigator.clipboard?.writeText('chromehearts@gmail.com').then(() => {
+                showPopup("📧 Email Copied", "chromehearts@gmail.com copied to clipboard. Use your email client to write to us.");
+            }).catch(() => { window.location.href = 'mailto:chromehearts@gmail.com'; });
+        });
+    }
+    // logo effect
+    const brandImg = document.getElementById('brandLogoImg');
+    if(brandImg) {
+        brandImg.addEventListener('mouseenter', () => brandImg.style.filter = "drop-shadow(0 0 6px #b3a0a0)");
+        brandImg.addEventListener('mouseleave', () => brandImg.style.filter = "drop-shadow(0 1px 4px rgba(0,0,0,0.1))");
+    }
+    console.log("Transparent white theme active, 6 backgrounds, search bar, callback number field ready");
+</script>
+</body>
+</html>
